@@ -42,7 +42,10 @@ def download_items(stream_contents, filename_template, all_derivatives=False):
 
         for derivative in derivatives:
             item_id = derivative['checksum']
-            item = stream_contents['items'][item_id]
+            try: 
+                item = stream_contents['items'][item_id]
+            except KeyError :
+                pass
             original_filename = os.path.basename(item['url_path'].split('?')[0])
             template_namespace = {
                 'stream_id': stream_contents['id'],
