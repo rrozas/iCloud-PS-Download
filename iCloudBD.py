@@ -45,6 +45,7 @@ def download_items(stream_contents, filename_template, all_derivatives=False):
             try: 
                 item = stream_contents['items'][item_id]
             except KeyError :
+                print('url not found for item %s' % item_id)
                 pass
             original_filename = os.path.basename(item['url_path'].split('?')[0])
             template_namespace = {
