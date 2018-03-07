@@ -47,6 +47,7 @@ def download_items(stream_contents, filename_template, all_derivatives=False):
             template_namespace = {
                 'stream_id': stream_contents['id'],
                 'stream_name': stream_contents['stream_data']['streamName'],
+                'date_created': photo['dateCreated'].split("T")[0].replace('-',''),
                 'photo_guid': photo['photoGuid'],
                 'item_id': item_id,
                 'photo_index': index,
@@ -85,7 +86,7 @@ def parse_args():
     ap.add_argument('--no-download', action='store_true', default=False, help='do not download actual items')
     ap.add_argument(
         '--download-filename-template',
-        default='./{stream_id}/{original_filename}',
+        default='./{stream_name}/{date_created}_{original_filename}',
         help='File download name template (use {} placeholders)\nDefault "%(default)s"',
     )
     ap.add_argument(
