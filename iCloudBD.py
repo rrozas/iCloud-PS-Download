@@ -52,7 +52,7 @@ def download_items(stream_contents, filename_template, all_derivatives=False):
                 'stream_id': stream_contents['id'],
                 'stream_name': stream_contents['stream_data']['streamName'],
                 'date_created': photo['dateCreated'].split("T")[0].replace('-',''),
-                'year' : photo['dateCreated'].split("T")[0].split('-')[0]
+                'year' : photo['dateCreated'].split("T")[0].split('-')[0],
                 'photo_guid': photo['photoGuid'],
                 'item_id': item_id,
                 'photo_index': index,
