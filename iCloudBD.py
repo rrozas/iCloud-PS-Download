@@ -2,23 +2,23 @@ import requests
 import json
 import argparse
 import os.path
-
+import logging
 
 def get_stream_contents(stream_id):
     base_url = 'https://p13-sharedstreams.icloud.com/' + stream_id + '/sharedstreams/'
     url = base_url + 'webstream'
-    print('Getting photo list...')
+    logging.info('Getting photo list...')
     r = requests.post(url, data=json.dumps({"streamCtag": None}))
     stream_data = r.json()
     guids = [item['photoGuid'] for item in stream_data['photos']]
-    print('%d items in stream.' % len(guids))
+    logging.info('%d items in stream.' % len(guids))
     chunk = 20
     batches = list(zip(*[iter(guids)] * chunk))
     locations = {}
     items = {}
     for i, batch in enumerate(batches, 1):
         url = base_url + 'webasseturls'
-        print('Getting photo URLs (%d/%d)...' % (i, len(batches)))
+        logging.info('Getting photo URLs (%d/%d)...' % (i, len(batches)))
         r = requests.post(url, data=json.dumps({"photoGuids": list(batch)}))
         batch_data = r.json()
         locations.update(batch_data.get('locations', {}))
@@ -45,7 +45,7 @@ def download_items(stream_contents, filename_template, all_derivatives=False):
             try: 
                 item = stream_contents['items'][item_id]
             except KeyError :
-                print('url not found for item %s' % item_id)
+                logging.warning('url not found for item %s' % item_id)
                 continue
             original_filename = os.path.basename(item['url_path'].split('?')[0])
             template_namespace = {
@@ -65,12 +65,12 @@ def download_items(stream_contents, filename_template, all_derivatives=False):
             file_name = filename_template.format(**template_namespace)
             os.makedirs(os.path.dirname(file_name), exist_ok=True)
             if os.path.exists(file_name):
-                print('Already exists: %s' % file_name)
+                logging.warning('Already exists: %s' % file_name)
                 continue
             location = item['url_location']
             host = locations[location]['hosts'][0]
             url = 'https://' + host + item['url_path']
-            print('Downloading photo %s derivative %s to %s (%s bytes)' % (
+            logging.info('Downloading photo %s derivative %s to %s (%s bytes)' % (
                 template_namespace['photo_guid'],
                 template_namespace['derivative_id'],
                 file_name,
@@ -119,7 +119,7 @@ def main():
     if args.dump_json:
         with open(args.dump_json, 'w') as dump_file:
             json.dump(stream_contents, dump_file, sort_keys=True, indent=2)
-            print('Wrote metadata to %s' % dump_file.name)
+            logging.info('Wrote metadata to %s' % dump_file.name)
     if not args.no_download:
         download_items(
             stream_contents,
