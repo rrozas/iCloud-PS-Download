@@ -3,6 +3,7 @@ import json
 import argparse
 import os.path
 import logging
+from datetime import datetime
 
 def get_stream_contents(stream_id):
     base_url = 'https://p13-sharedstreams.icloud.com/' + stream_id + '/sharedstreams/'
@@ -50,8 +51,8 @@ def download_items(stream_contents, filename_template, all_derivatives=False):
             original_filename = os.path.basename(item['url_path'].split('?')[0])
             template_namespace = {
                 'stream_id': stream_contents['id'],
-                'stream_name': stream_contents['stream_data']['streamName'],
-                'date_created': photo['dateCreated'].split("T")[0].replace('-',''),
+                'stream_name': stream_contents['stream_data']['streamName'].replace("/","-"),
+                'date_created': datetime.strptime(photo['dateCreated'], "%Y-%m-%dT%H:%M:%SZ").timestamp()
                 'year' : photo['dateCreated'].split("T")[0].split('-')[0],
                 'photo_guid': photo['photoGuid'],
                 'item_id': item_id,
