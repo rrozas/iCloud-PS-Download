@@ -52,7 +52,7 @@ def download_items(stream_contents, filename_template, all_derivatives=False):
             template_namespace = {
                 'stream_id': stream_contents['id'],
                 'stream_name': stream_contents['stream_data']['streamName'].replace("/","-"),
-                'date_created': datetime.strptime(photo['dateCreated'], "%Y-%m-%dT%H:%M:%SZ").timestamp()
+                'date_created': datetime.strptime(photo['dateCreated'], "%Y-%m-%dT%H:%M:%SZ").timestamp(),
                 'year' : photo['dateCreated'].split("T")[0].split('-')[0],
                 'photo_guid': photo['photoGuid'],
                 'item_id': item_id,
